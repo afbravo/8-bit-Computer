@@ -1,0 +1,54 @@
+$date
+	Mon Aug 15 18:59:08 2022
+$end
+$version
+	Icarus Verilog
+$end
+$timescale
+	1ps
+$end
+$scope module register_test $end
+$var wire 8 ! out [7:0] $end
+$var reg 1 " clock $end
+$var reg 1 # en $end
+$var reg 8 $ in [7:0] $end
+$var reg 1 % reset $end
+$scope module r $end
+$var wire 8 & D [7:0] $end
+$var wire 1 " clock $end
+$var wire 1 # en $end
+$var wire 1 % reset $end
+$var reg 8 ' Q [7:0] $end
+$upscope $end
+$upscope $end
+$enddefinitions $end
+#0
+$dumpvars
+bx '
+bx &
+0%
+bx $
+0#
+0"
+bx !
+$end
+#1
+b0 !
+b0 '
+1%
+1"
+#2
+0%
+0"
+#3
+b10011101 !
+b10011101 '
+b10011101 $
+b10011101 &
+1#
+1"
+#4
+0#
+0"
+#5
+1"
