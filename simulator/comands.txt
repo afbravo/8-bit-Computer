@@ -1,0 +1,12 @@
+lda     0001
+sta     0010
+ldb     0011
+stb     0100
+add     0101
+sub     0110
+jmp     0111
+jnz     1000
+jnc     1001
+hlt     1110
+out     1111
+

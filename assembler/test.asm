@@ -1,6 +1,8 @@
-add 5
-lda 13
-jmp 2
-ldb 9
-jne 12
-sub 0
+lda 0
+ldb 1
+add
+out
+lda $15
+stb $15
+jnc $2
+hlt

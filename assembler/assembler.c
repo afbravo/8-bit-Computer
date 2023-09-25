@@ -3,10 +3,10 @@
  *
  *  Program to assemble source code into machine code
  *  for the 8 bit computer.
- * 
+ *
  *  Created by: Andres F. Bravo
  *  github: https://github.com/afbravo
- * 
+ *
  *  Version 1.0
  *
  */
@@ -15,20 +15,16 @@
 #include <stdlib.h>
 #include <string.h>
 
-#define MEMORY_SIZE 16 //maximum memory size
-
 // function prototypes
-void processArgs(int argc, char **argv, char **inputFile, char **outputFile);
-unsigned char *assemble(char *inputFile);
-void save_file(char *fileName, unsigned char *binary);
+void processArgs(int argc, char **argv, char **inputFile, char **outputFile, int *memSize);
+unsigned char *assemble(char *inputFile, int memSize);
+void save_file(char *fileName, unsigned char *binary, int memSize);
 unsigned char translate(const char *instruction);
 
-
-
-void processArgs(int argc, char **argv, char **inputFile, char **outputFile)
+void processArgs(int argc, char **argv, char **inputFile, char **outputFile, int *memSize)
 {
     /*
-        Function processes command line arguments. The following are 
+        Function processes command line arguments. The following are
         accepted arguments:
             <input file> : specifies the input file name
             -o <output file> : specifies the output file name
@@ -52,7 +48,6 @@ void processArgs(int argc, char **argv, char **inputFile, char **outputFile)
             - add .bin extension to output file if not specified
     */
 
-
     if (argc < 2) // user did not specify any file
     {
         printf("Error: No arguments specified\n");
@@ -71,6 +66,9 @@ void processArgs(int argc, char **argv, char **inputFile, char **outputFile)
                 exit(0);
             case 'o': // change output file name (add .bin extension)
                 *outputFile = argv[i + 1];
+                break;
+            case 'm': // change memory size
+                *memSize = atoi(argv[i + 1]);
                 break;
             }
         }
@@ -91,7 +89,7 @@ void processArgs(int argc, char **argv, char **inputFile, char **outputFile)
     }
 }
 
-unsigned char *assemble(char *fileName)
+unsigned char *assemble(char *fileName, int memSize)
 {
     /*
         Function opens the input file containing assembly language for the 8-bit computer.
@@ -119,18 +117,18 @@ unsigned char *assemble(char *fileName)
             - Add error checking for invalid operands
     */
     FILE *file = fopen(fileName, "r");
-    
+
     if (file == NULL)
     {
         printf("Error opening file\n");
         exit(1);
     }
 
-    unsigned char *binary = (unsigned char *)malloc(MEMORY_SIZE * sizeof(unsigned char));
+    unsigned char *binary = (unsigned char *)malloc(memSize * sizeof(unsigned char));
     unsigned char index = 0;
     char instruction[4];
     int number;
-    while (feof(file) == 0 && index < MEMORY_SIZE)
+    while (feof(file) == 0 && index < memSize)
     {
         fscanf(file, "%s %d", instruction, &number);
         number &= 0xFF;
@@ -148,21 +146,23 @@ unsigned char translate(const char *instruction)
         is shifted left by 4 bits to make room for the operand.
 
         The following instruction have the following binary values:
-            NOP : 0000
-            LDA : 0001
-            ADD : 0010
-            SUB : 0011
-            STA : 0100
-            LDI : 0101
-            JMP : 0110
-            JC  : 0111
-            OUT : 1000
-            HLT : 1111
+            NOP : 0000 | 0x00
+            LDA : 0001 | 0x10
+            STA : 0010 | 0x20
+            LDB : 0011 | 0x30
+            STB : 0100 | 0x40
+            ADD : 0101 | 0x50
+            SUB : 0110 | 0x60
+            JMP : 0111 | 0x70
+            JNZ : 1000 | 0x80
+            JNC : 1001 | 0x90
+            HLT : 1110 | 0xE0
+            OUT : 1111 | 0xF0
 
         Arguments:
             instruction : instruction to be translated
         Returns:
-            binary : binary byte representation of the instruction 
+            binary : binary byte representation of the instruction
     */
     if (strcmp(instruction, "lda") == 0)
     {
@@ -214,7 +214,8 @@ unsigned char translate(const char *instruction)
     }
 }
 
-void save_file(char *fileName, unsigned char *binary){
+void save_file(char *fileName, unsigned char *binary, int memSize)
+{
     /*
         Function saves the binary array into a file.
 
@@ -232,7 +233,7 @@ void save_file(char *fileName, unsigned char *binary){
         exit(1);
     }
 
-    fwrite(binary, sizeof(unsigned char), MEMORY_SIZE, file);
+    fwrite(binary, sizeof(unsigned char), memSize, file);
     fclose(file);
 }
 
@@ -240,17 +241,25 @@ void save_file(char *fileName, unsigned char *binary){
 int main(int argc, char **argv)
 {
 
-    char *outputFileName = "out.bin";
-    char *inputFileName = NULL;
-    FILE *fptr;
+    // char *outputFileName = "out.bin";
+    // char *inputFileName = NULL;
+    // FILE *fptr;
+    // int memSize = 16;
 
-    processArgs(argc, argv, &inputFileName, &outputFileName);
+    // processArgs(argc, argv, &inputFileName, &outputFileName, &memSize);
 
-    // open file
-    // compile file to binary
-    unsigned char *binary = assemble(inputFileName);
+    // // open file
+    // // compile file to binary
+    // unsigned char *binary = assemble(inputFileName, memSize);
 
-    // save binary file
-    save_file(outputFileName, binary);
+    // // save binary file
+    // save_file(outputFileName, binary, memSize);
+    // return 0;
+
+    int *a = (int *)malloc(5);
+    printf("%d\n", a[0]);
+    printf("%d\n", a[1]);
+    printf("%d\n", a[2]);
+    printf("%d\n", a[3]);
     return 0;
 }
